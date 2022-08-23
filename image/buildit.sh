@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcloud builds submit --tag gcr.io/${PPROJECT}/hello-test
+gcloud builds submit -t gcr.io/${PROJECT}/hello-test .
