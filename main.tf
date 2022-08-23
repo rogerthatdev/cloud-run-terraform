@@ -7,8 +7,9 @@ resource "google_service_account" "runner" {
   display_name = "Cloud Run runner"
 }
 
-resource "google_cloud_run_service" "default" {
-  name     = "cloudrun-srv"
+# Deploy Cloud Run basic service
+resource "google_cloud_run_service" "hello_test_01" {
+  name     = "hello-test-01"
   location = "us-central1"
 
   template {
@@ -38,9 +39,9 @@ data "google_iam_policy" "noauth" {
   }
 }
 
-resource "google_cloud_run_service_iam_policy" "noauth" {
-  service     = google_cloud_run_service.default.name
-  location = google_cloud_run_service.default.location
+resource "google_cloud_run_service_iam_policy" "hello_test_01_noauth" {
+  service     = google_cloud_run_service.hello_test_01.name
+  location = google_cloud_run_service.hello_test_01.location
   project = var.project_id
   policy_data = data.google_iam_policy.noauth.policy_data
 }
