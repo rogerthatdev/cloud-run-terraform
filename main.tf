@@ -15,7 +15,7 @@ resource "google_cloud_run_service" "hello_test_01" {
   template {
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/hello-test"
+        image = "gcr.io/${var.project_id}/hello-test@sha256:${var.image_sha}"
         ports {
           container_port = 3000
         }
