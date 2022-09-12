@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Running this a second time should only create a new build image but not affect the run service
+
 gcloud builds submit \
     --config=web-build.cloudbuild.yaml \
     --ignore-file=web-build.gcloudignore \
