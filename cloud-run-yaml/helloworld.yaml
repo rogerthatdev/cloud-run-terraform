@@ -1,0 +1,13 @@
+# Super basic, just updates run service to 100% of the specified image.  
+# image hash should be passed in as a var though.  
+# use gcloud run services describe website-plus --format export > service.yaml to see what a fully fleshed out yaml can look like
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hello-world
+spec:
+  template:
+    spec:
+      containers:
+      - image: us-central1-docker.pkg.dev/cloud-run-fafo-f241/website-plus/helloworld@sha256:f27e2db4b7e045380d115d1c9ca9b735a8076a1316df5b3ed0adfbe784f2bed0
+      serviceAccountName: cloud-runner-too@cloud-run-fafo-f241.iam.gserviceaccount.com

@@ -1,0 +1,11 @@
+steps:
+ # Deploy container image to Cloud Run
+ - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+   entrypoint: gcloud
+   args:
+   - 'run'
+   - 'services'
+   - 'replace'
+   - 'helloworld.yaml'
+   - '--region'
+   - '${_REGION}'
