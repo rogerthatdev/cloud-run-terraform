@@ -6,7 +6,7 @@ resource "google_cloud_run_service" "my_app" {
   template {
     spec {
       containers {
-        image = local.run_container_image
+        image = local.place_holder_container_image
       }
       service_account_name = google_service_account.runner.email
     }

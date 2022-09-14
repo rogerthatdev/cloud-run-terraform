@@ -7,7 +7,7 @@ locals {
     "run.googleapis.com",
     "cloudbuild.googleapis.com"
   ]
-  run_container_image = "us-docker.pkg.dev/cloudrun/container/hello"
+  place_holder_container_image = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
 resource "google_project_service" "default" {
