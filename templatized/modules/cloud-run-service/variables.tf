@@ -20,21 +20,14 @@ variable "run_service_name" {
   description = "Name for the Run service."
 }
 
-variable "container_image_url" {
+variable "primary_revision_image_url" {
   type = string
   description = "URL for Run service container build."
-  default     = ""
+  default     = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
-variable "image_name" {
+variable "revision_b_name" {
   type = string
-  description = "Name of container in AR repo"
-  default     = ""
-}
-
-
-variable "image_tag" {
-  type = string
-  description = "Tag for image to use"
-  default     = ""
+  description = "Name of revision B. Must be existing revision, otherwise module will default to revision a."
+  default = ""
 }

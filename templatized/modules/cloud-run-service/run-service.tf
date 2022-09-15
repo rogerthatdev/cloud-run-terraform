@@ -1,8 +1,19 @@
 locals {
-  boiler_plate_image    = "us-docker.pkg.dev/cloudrun/container/hello"
-  is_first_time         = data.google_cloud_run_service.run-service.id == null ? true : false
-  # TODO: Revision name
-  revision_name         = local.is_first_time ? "${var.run_service_name}-boilerplate" : "${var.run_service_name}-boilerplate"
+  # is_first_time used to enable deploy Run service without a provided image in cases where AR is created along side Run service and before builds are pushed.
+  # is_first_time         = data.google_cloud_run_service.run-service.id == null ? true : false
+  # boiler_plate_image    = "us-docker.pkg.dev/cloudrun/container/hello"
+  primary_revision_name = "${var.run_service_name}-${random_id.revision_suffix.hex}"
+  revision_names        =  {
+    revision_b          = var.revision_b_name == "" ? local.primary_revision_name : var.revision_b_name
+  }
+}
+
+resource "random_id" "revision_suffix" {
+  keepers = {
+    # Generate a new suffix everytime primary_revision_image_url is changed.
+    primary_revision_image_url = var.primary_revision_image_url
+  }
+  byte_length = 3
 }
 
 data "google_iam_policy" "noauth" {
@@ -21,25 +32,24 @@ resource "google_cloud_run_service" "my_app" {
   template {
     spec {
       containers {
-        image = local.is_first_time ? local.boiler_plate_image : local.boiler_plate_image
+        image = var.primary_revision_image_url
       }
       service_account_name = google_service_account.runner.email
     }
-    # name the revision for the canaray build
     metadata {
-      name = local.revision_name
+      name = local.primary_revision_name
     }
   }
-  # change this block to point to the initial build
+  # This is the primary revision
   traffic {
-    percent       = 100
+    percent       = 75
     # will always be new revision
-    revision_name =  local.revision_name
+    revision_name =  local.primary_revision_name
   }
-  # this needs to be provided
+  # This is revision B. Defaults to the same as revision A if not provided.
   traffic {
-    percent       = 0
-    revision_name = local.is_first_time ? local.revision_name : local.revision_name
+    percent       = 25
+    revision_name = local.revision_names.revision_b
   }
 
   depends_on = [
@@ -61,14 +71,15 @@ output "service_run" {
   value = data.google_cloud_run_service.run-service.id == null ? "FIRST TIME!" : "NOT FIRST TIME"
 }
 
-# resource "google_cloud_run_service_iam_policy" "noauth" {
-#   location = google_cloud_run_service.my_app.location
-#   project  = google_cloud_run_service.my_app.project
-#   service  = google_cloud_run_service.my_app.name
 
-#   policy_data = data.google_iam_policy.noauth.policy_data
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_service.my_app.location
+  project  = google_cloud_run_service.my_app.project
+  service  = google_cloud_run_service.my_app.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
   
-# }
+}
 
 # us-central1-docker.pkg.dev/cloud-run-fafo-f241/website
 # /website image_name
