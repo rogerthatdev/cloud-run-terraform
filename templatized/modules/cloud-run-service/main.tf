@@ -5,10 +5,10 @@ data "google_project" "app" {
 # Service accounts
 
 output "all_outputs" {
-    value = {
-      # needed for AR reader permissions
-      "cloud_run_agent" = google_project_service_identity.cloud_run_agent.email
-    }
+  value = {
+    # needed for AR reader permissions
+    "cloud_run_agent" = google_project_service_identity.cloud_run_agent.email
+  }
 }
 
 resource "random_string" "service_account_suffix" {

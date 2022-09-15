@@ -1,10 +1,8 @@
 locals {
-  # is_first_time used to enable deploy Run service without a provided image in cases where AR is created along side Run service and before builds are pushed.
-  # is_first_time         = data.google_cloud_run_service.run-service.id == null ? true : false
-  # boiler_plate_image    = "us-docker.pkg.dev/cloudrun/container/hello"
   primary_revision_name = "${var.run_service_name}-${random_id.revision_suffix.hex}"
-  revision_names        =  {
-    revision_b          = var.revision_b_name == "" ? local.primary_revision_name : var.revision_b_name
+  # TODO: add support for more revisions
+  revision_names = {
+    revision_b = var.revision_b_name == "" ? local.primary_revision_name : var.revision_b_name
   }
 }
 
@@ -42,9 +40,10 @@ resource "google_cloud_run_service" "my_app" {
   }
   # This is the primary revision
   traffic {
-    percent       = 75
+    # TODO: add support for adjusting percentages
+    percent = 75
     # will always be new revision
-    revision_name =  local.primary_revision_name
+    revision_name = local.primary_revision_name
   }
   # This is revision B. Defaults to the same as revision A if not provided.
   traffic {
@@ -58,10 +57,10 @@ resource "google_cloud_run_service" "my_app" {
 }
 
 data "google_cloud_run_service" "run-service" {
-  project = var.project_id
-  name = var.run_service_name
+  project  = var.project_id
+  name     = var.run_service_name
   location = var.region
-  
+
   depends_on = [
     time_sleep.wait_60_seconds
   ]
@@ -78,7 +77,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
   service  = google_cloud_run_service.my_app.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
-  
+
 }
 
 # us-central1-docker.pkg.dev/cloud-run-fafo-f241/website
