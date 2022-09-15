@@ -6,14 +6,6 @@ locals {
   }
 }
 
-resource "random_id" "revision_suffix" {
-  keepers = {
-    # Generate a new suffix everytime primary_revision_image_url is changed.
-    primary_revision_image_url = var.primary_revision_image_url
-  }
-  byte_length = 3
-}
-
 data "google_iam_policy" "noauth" {
   binding {
     role = "roles/run.invoker"
@@ -21,6 +13,14 @@ data "google_iam_policy" "noauth" {
       "allUsers",
     ]
   }
+}
+
+resource "random_id" "revision_suffix" {
+  keepers = {
+    # Generate a new suffix everytime primary_revision_image_url is changed.
+    primary_revision_image_url = var.primary_revision_image_url
+  }
+  byte_length = 3
 }
 
 resource "google_cloud_run_service" "my_app" {
@@ -56,6 +56,14 @@ resource "google_cloud_run_service" "my_app" {
   ]
 }
 
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_service.my_app.location
+  project  = google_cloud_run_service.my_app.project
+  service  = google_cloud_run_service.my_app.name
+  policy_data = data.google_iam_policy.noauth.policy_data
+}
+
+# Can be used to check if this is the first time creating Run Service (id will be null if resource doesn't exist.)
 data "google_cloud_run_service" "run-service" {
   project  = var.project_id
   name     = var.run_service_name
@@ -65,21 +73,3 @@ data "google_cloud_run_service" "run-service" {
     time_sleep.wait_60_seconds
   ]
 }
-
-output "service_run" {
-  value = data.google_cloud_run_service.run-service.id == null ? "FIRST TIME!" : "NOT FIRST TIME"
-}
-
-
-resource "google_cloud_run_service_iam_policy" "noauth" {
-  location = google_cloud_run_service.my_app.location
-  project  = google_cloud_run_service.my_app.project
-  service  = google_cloud_run_service.my_app.name
-
-  policy_data = data.google_iam_policy.noauth.policy_data
-
-}
-
-# us-central1-docker.pkg.dev/cloud-run-fafo-f241/website
-# /website image_name
-# tag

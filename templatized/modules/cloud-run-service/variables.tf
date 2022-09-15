@@ -2,13 +2,6 @@ variable "project_id" {
   type = string
 }
 
-# Add support for in future
-# variable "service_account" {
-#   type = string
-#   description = "Service account to use for Cloud Run service. If not provided, one will be created."
-#   default = ""
-# }
-
 variable "region" {
   type        = string
   description = "Default region for module resources."
@@ -31,3 +24,10 @@ variable "revision_b_name" {
   description = "Name of revision B. Must be existing revision, otherwise module will default to revision a."
   default     = ""
 }
+
+# Add support for in future
+# variable "service_account" {
+#   type = string
+#   description = "Service account to use for Cloud Run service. If not provided, one will be created."
+#   default = ""
+# }
