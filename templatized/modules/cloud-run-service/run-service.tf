@@ -1,6 +1,7 @@
 locals {
   boiler_plate_image    = "us-docker.pkg.dev/cloudrun/container/hello"
   is_first_time         = data.google_cloud_run_service.run-service.id == null ? true : false
+  ar_registry_url = "${google_artifact_registry_repository.my_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_repo.project}/${google_artifact_registry_repository.my_repo.name}"
   # TODO: Revision name
   revision_name         = local.is_first_time ? "${var.run_service_name}-boilerplate" : "${var.run_service_name}-boilerplate"
 }
@@ -56,6 +57,12 @@ data "google_cloud_run_service" "run-service" {
 output "service_run" {
   value = data.google_cloud_run_service.run-service.id == null ? "FIRST TIME!" : "NOT FIRST TIME"
 }
+
+output "ar_registry_url" {
+  # value = "https://us-central1-docker.pkg.dev/cloud-run-fafo-f241/website"
+  value = local.ar_registry_url
+}
+
 
 # resource "google_cloud_run_service_iam_policy" "noauth" {
 #   location = google_cloud_run_service.my_app.location

@@ -9,3 +9,7 @@ module "cloud_run_service" {
 output "service_run" {
   value = module.cloud_run_service.service_run
 }
+
+output "ar_registry_url" {
+  value = module.cloud_run_service.ar_registry_url
+}
