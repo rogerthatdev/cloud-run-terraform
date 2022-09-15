@@ -1,4 +1,3 @@
-
 locals {
   services = [
     "artifactregistry.googleapis.com",
@@ -6,7 +5,6 @@ locals {
     "cloudbuild.googleapis.com"
   ]
 }
-
 
 resource "google_project_service" "default" {
   project                    = var.project_id
