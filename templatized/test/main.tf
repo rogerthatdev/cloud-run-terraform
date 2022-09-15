@@ -6,10 +6,6 @@ module "cloud_run_service" {
   revision_b_name = var.revision_b_name
 }
 
-output "service_run" {
-  value = module.cloud_run_service.service_run
-}
-
 output "all_outputs" {
   value = module.cloud_run_service.all_outputs
 }

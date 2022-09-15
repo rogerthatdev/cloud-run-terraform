@@ -64,7 +64,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 }
 
 # Can be used to check if this is the first time creating Run Service (id will be null if resource doesn't exist.)
-data "google_cloud_run_service" "run-service" {
+data "google_cloud_run_service" "run_service" {
   project  = var.project_id
   name     = var.run_service_name
   location = var.region
