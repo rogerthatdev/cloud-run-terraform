@@ -1,7 +1,6 @@
 locals {
   boiler_plate_image    = "us-docker.pkg.dev/cloudrun/container/hello"
   is_first_time         = data.google_cloud_run_service.run-service.id == null ? true : false
-  ar_registry_url = "${google_artifact_registry_repository.my_repo.location}-docker.pkg.dev/${google_artifact_registry_repository.my_repo.project}/${google_artifact_registry_repository.my_repo.name}"
   # TODO: Revision name
   revision_name         = local.is_first_time ? "${var.run_service_name}-boilerplate" : "${var.run_service_name}-boilerplate"
 }
@@ -22,7 +21,7 @@ resource "google_cloud_run_service" "my_app" {
   template {
     spec {
       containers {
-        image = local.is_first_time ? local.boiler_plate_image : var.container_image_url
+        image = local.is_first_time ? local.boiler_plate_image : local.boiler_plate_image
       }
       service_account_name = google_service_account.runner.email
     }
@@ -44,7 +43,7 @@ resource "google_cloud_run_service" "my_app" {
   }
 
   depends_on = [
-    time_sleep.wait_30_seconds
+    time_sleep.wait_60_seconds
   ]
 }
 
@@ -52,17 +51,15 @@ data "google_cloud_run_service" "run-service" {
   project = var.project_id
   name = var.run_service_name
   location = var.region
+  
+  depends_on = [
+    time_sleep.wait_60_seconds
+  ]
 }
 
 output "service_run" {
   value = data.google_cloud_run_service.run-service.id == null ? "FIRST TIME!" : "NOT FIRST TIME"
 }
-
-output "ar_registry_url" {
-  # value = "https://us-central1-docker.pkg.dev/cloud-run-fafo-f241/website"
-  value = local.ar_registry_url
-}
-
 
 # resource "google_cloud_run_service_iam_policy" "noauth" {
 #   location = google_cloud_run_service.my_app.location
@@ -72,3 +69,7 @@ output "ar_registry_url" {
 #   policy_data = data.google_iam_policy.noauth.policy_data
   
 # }
+
+# us-central1-docker.pkg.dev/cloud-run-fafo-f241/website
+# /website image_name
+# tag

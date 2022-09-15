@@ -9,11 +9,6 @@ variable "project_id" {
 #   default = ""
 # }
 
-variable "ar_repository_id" {
-  type = string
-  description = "Name for Artifact Registry repository."
-}
-
 variable "region" {
   type = string
   description = "Default region for module resources."
@@ -28,5 +23,18 @@ variable "run_service_name" {
 variable "container_image_url" {
   type = string
   description = "URL for Run service container build."
+  default     = ""
+}
+
+variable "image_name" {
+  type = string
+  description = "Name of container in AR repo"
+  default     = ""
+}
+
+
+variable "image_tag" {
+  type = string
+  description = "Tag for image to use"
   default     = ""
 }

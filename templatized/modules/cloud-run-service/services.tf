@@ -13,8 +13,10 @@ resource "google_project_service" "default" {
   disable_dependent_services = true
 }
 
-resource "time_sleep" "wait_30_seconds" {
-  depends_on = [google_project_service.default]
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [
+    google_project_service.default
+  ]
 
-  create_duration = "30s"
+  create_duration = "60s"
 }
